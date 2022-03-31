@@ -43,7 +43,6 @@ function createHTMLElementsAndStartWatch() {
   
   createButtonPlay.addEventListener('click', () => {
     stopedStartWatchStudy = setInterval(runWatch, 1000)
-    console.log('Clicou no play')
     
     document.getElementById('pause-watch-study-btn').style.display = 'flex'
     
@@ -58,10 +57,8 @@ function createHTMLElementsAndStartWatch() {
 
     clearInterval(stopedStartWatchStudy)
 
-    console.log('Pause')
   })
 
-  console.log(createButtonPlay)
   
   const createButtonReload = document.createElement('button')
   createButtonReload.setAttribute('id', 'reload-btn')
@@ -82,8 +79,6 @@ function createHTMLElementsAndStartWatch() {
     
     segundsStudy --
     
-    console.log('Clicou no reload')
-    
   })
 
   
@@ -94,10 +89,18 @@ function createHTMLElementsAndStartWatch() {
   
   const createButtonSettings = document.createElement('button')
   createButtonSettings.setAttribute('id', 'settins-btn')
-  createButtonSettings.setAttribute('class', 'timer-btn')
+  createButtonSettings.setAttribute('class', 'timer-btn settings-popup-btn')
   createButtonSettings.setAttribute('type', 'button')
   createButtonSettings.setAttribute('title', 'settins')
   createButtonSettings.appendChild(createImgTagSettings)
+
+
+  createButtonSettings.addEventListener('click', () => {
+
+    startModal('modal-settings')
+    
+    console.log('Clicou no Settings')
+  })
 
   const createImgTagInfo = document.createElement('img')
   createImgTagInfo.setAttribute('class', 'image-btn')
@@ -106,10 +109,14 @@ function createHTMLElementsAndStartWatch() {
   
   const createButtonInfo = document.createElement('button')
   createButtonInfo.setAttribute('id', 'info-btn')
-  createButtonInfo.setAttribute('class', 'timer-btn')
+  createButtonInfo.setAttribute('class', 'timer-btn info-popup-btn')
   createButtonInfo.setAttribute('type', 'button')
   createButtonInfo.setAttribute('title', 'info')
   createButtonInfo.appendChild(createImgTagInfo)
+  
+  createButtonInfo.addEventListener('click', () => {
+    console.log('Clicou no info')
+  })
   
   const createContainerSettingsAndInfo = document.createElement('div') 
   createContainerSettingsAndInfo.setAttribute('class', 'container-settings-info')
@@ -147,7 +154,17 @@ function runWatch() {
     document.getElementById('pause-watch-study-btn').style.display = 'none'
   }
   
-  console.log(segundsStudy)
-  
-  watch.innerText = `${minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: `${segundsStudy}`}`
+  watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}`: minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
+}
+
+function startModal(modalID) {
+  const modal = document.getElementById(modalID)
+  modal.classList.add('show-modal')
+
+  modal.addEventListener('click', (event) => {
+    
+    if(event.target.id === modalID || event.target.className === 'close-button') {
+      modal.classList.remove('show-modal')
+    }
+  })
 }
