@@ -1,13 +1,41 @@
 const buttonContainer = document.querySelector('.button-container')
 const containerTimer = document.querySelector('.container-timer')
 const watch = document.getElementById('watch-study')
+const inputFormSettingsStudy = document.getElementsByTagName('input')[0]
+const inputFormSettingsBreak = document.getElementsByTagName('input')[1]
+const form = document.getElementById('form')
 
-let minutesStudy = 1
-let segundsStudy = 6
-let minutesBreath = 5
-let segundsBreath = 60
+let minutesStudy
+let segundsStudy = 0
+let minutesBreak
+let segundsBreak = 0
 let stopedStartWatchStudy = 0
 let stopedStartWatchBreath = 0
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault()
+  if(inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === '') {
+    alert('Please, type something!') // I will change it.
+  }else{
+    console.log('ISSO!! ')
+    // console.log(inputFormSettingsStudy.value)
+
+    minutesStudy = inputFormSettingsStudy.value
+    minutesBreak = inputFormSettingsBreak.value
+
+    watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}`: minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
+
+    console.log('Salvou')
+
+    // startModal('close-button')
+
+    console.log(minutesBreak)
+
+    if(minutesBreak !== null) {
+      watch.innerText = `${minutesBreak < 10 ? `0${minutesBreak}`: minutesBreak} : ${segundsBreak < 10 ? `0${segundsBreak}`: segundsBreak}`
+    }
+  }
+})
 
 function createHTMLElementsAndStartWatch() {
 
@@ -47,6 +75,15 @@ function createHTMLElementsAndStartWatch() {
     document.getElementById('pause-watch-study-btn').style.display = 'flex'
     
     document.getElementById('start-watch-study-btn').style.display = 'none'
+
+    if(minutesStudy === undefined) {
+      alert('Please, configure the pomodore timer!')
+
+      minutesStudy ++
+      clearInterval(stopedStartWatchStudy)
+      document.getElementById('start-watch-study-btn').style.display = 'flex'
+      document.getElementById('pause-watch-study-btn').style.display = 'none'
+    }
     
   })
   
@@ -162,7 +199,7 @@ function startModal(modalID) {
   modal.classList.add('show-modal')
 
   modal.addEventListener('click', (event) => {
-    
+
     if(event.target.id === modalID || event.target.className === 'close-button') {
       modal.classList.remove('show-modal')
     }

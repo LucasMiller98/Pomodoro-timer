@@ -190,7 +190,7 @@ main {
   justify-content: center;
   flex-direction: column;
   gap: 1rem;
-  padding-left: 3rem;
+  padding-left: 5rem;
 }
 
 .input-modal-settings {

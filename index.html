@@ -33,17 +33,18 @@
         
         <h3 class="settings-title">Settings</h3>
 
-        <form class="form-settings">
+        <form class="form-settings" id="form">
           <div class="container-form-settings-study container-study-and-break">
             <label for="study" class="label-break-and-study">Study</label>
             <input 
               placeholder="Type your time to study"
               type="number" 
               name="study" 
+              value=""
+              id="input-form-settings-study"
               class="input-modal-settings"
             >
 
-            <button type="button" class="button-form-settings" id="save-button-study">Save</button>
           </div>
 
           <div class="container-form-settings-break container-study-and-break">
@@ -52,11 +53,12 @@
               type="number" 
               placeholder="Type your time to break" 
               name="break" 
+              id="input-form-settings-break"
               class="input-modal-settings"
             >
 
-            <button type="button" class="button-form-settings">Save</button>
           </div>
+          <button class="button-form-settings" class="close-button">Save</button>
         </form>
       </div>
     </div>
