@@ -18,18 +18,28 @@ main {
   height: 100vh;
 }
 
+#watch-mode {
+  font-size: .7rem;
+
+  position: absolute;
+  top: 3rem;
+}
+
 .clock {
   font-size: 3.7rem;
   height: 44vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column-reverse;
   width: 43.5%;
   margin-top: 1.7rem;
   background: #131313;
   color: #f1f1f1;
   border-radius: 50%;
   border: 8px solid #444242;
+
+  position: inherit;
 }
 
 .button-container {

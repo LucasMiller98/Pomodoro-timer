@@ -1,6 +1,7 @@
 const buttonContainer = document.querySelector('.button-container')
 const containerTimer = document.querySelector('.container-timer')
 const watch = document.getElementById('watch-study')
+const clockContainer = document.querySelector('.clock')
 const inputFormSettingsStudy = document.getElementsByTagName('input')[0]
 const inputFormSettingsBreak = document.getElementsByTagName('input')[1]
 const form = document.getElementById('form')
@@ -10,32 +11,118 @@ let segundsStudy = 0
 let minutesBreak
 let segundsBreak = 0
 let stopedStartWatchStudy = 0
-let stopedStartWatchBreath = 0
+let stopedStartWatchBreak = 0
 
 form.addEventListener('submit', (event) => {
   event.preventDefault()
   if(inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === '') {
     alert('Please, type something!') // I will change it.
   }else{
-    console.log('ISSO!! ')
-    // console.log(inputFormSettingsStudy.value)
 
     minutesStudy = inputFormSettingsStudy.value
     minutesBreak = inputFormSettingsBreak.value
+    
 
     watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}`: minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
 
+
+
     console.log('Salvou')
 
-    // startModal('close-button')
-
     console.log(minutesBreak)
-
-    if(minutesBreak !== null) {
-      watch.innerText = `${minutesBreak < 10 ? `0${minutesBreak}`: minutesBreak} : ${segundsBreak < 10 ? `0${segundsBreak}`: segundsBreak}`
-    }
   }
 })
+
+function listenerOnClickButtonPlay() {
+  stopedStartWatchStudy = setInterval(runWatchStudy, 1000)
+  
+  document.getElementById('pause-watch-study-btn').style.display = 'flex'
+  
+  document.getElementById('start-watch-study-btn').style.display = 'none'
+
+  if(minutesStudy === undefined) {
+    alert('Please, configure the pomodore timer!')
+
+    clearInterval(stopedStartWatchStudy)
+    document.getElementById('start-watch-study-btn').style.display = 'flex'
+    document.getElementById('pause-watch-study-btn').style.display = 'none'
+
+  }
+
+  if(minutesStudy === 0 && segundsStudy === 0) {
+
+    if(minutesBreak === inputFormSettingsBreak.value) {
+
+      segundsBreak = 1
+      
+      console.log('study min' + minutesStudy)
+      console.log('study seg' + segundsStudy)
+
+      stopedStartWatchBreak = setInterval(runWatchBreak, 1000)
+      
+      document.getElementById('pause-watch-study-btn').style.display = 'flex'
+  
+      document.getElementById('start-watch-study-btn').style.display = 'none'
+    }
+  }
+
+}
+
+function listenerOnClickButtonPause() {
+  document.getElementById('pause-watch-study-btn').style.display = 'none'
+
+  document.getElementById('start-watch-study-btn').style.display = 'flex'
+  
+  clearInterval(stopedStartWatchStudy)
+
+  
+  clearInterval(stopedStartWatchBreak)
+
+  console.log('break ' + minutesBreak)
+  console.log('study ' + minutesStudy)
+
+}
+
+function listenerOnClickButtonReload() {
+  minutesStudy = inputFormSettingsStudy.value
+  segundsStudy = 2
+  minutesBreak = inputFormSettingsBreak.value
+  segundsBreak = 2
+  
+  if(segundsStudy === 0) {
+    minutesStudy --
+    segundsStudy = 60
+  }
+
+  
+  if(Number(minutesStudy) === 0) {
+    clearInterval(stopedStartWatchStudy)
+    minutesStudy = 0
+    alert('Access denied. Please, try settings the Pomodoro timer.')
+    document.getElementById('start-watch-study-btn').style.display = 'flex'
+    document.getElementById('pause-watch-study-btn').style.display = 'none'
+  }
+  
+  segundsStudy --
+  
+  if(segundsBreak === 0) {
+    minutesBreak --
+    segundsBreak = 60
+  }
+
+  segundsBreak --
+
+}
+
+function listenerOnClickButtonSettings() {
+  startModal('modal-settings')
+    
+  console.log('Clicou no Settings')
+}
+
+function listenerOnClickButtonInfo() {
+  console.log('Clicou no info')
+}
 
 function createHTMLElementsAndStartWatch() {
 
@@ -59,42 +146,22 @@ function createHTMLElementsAndStartWatch() {
   const createImgTagPause = document.createElement('img')
   createImgTagPause.setAttribute('class', 'image-btn')
   createImgTagPause.setAttribute('src', 'images/pause.svg')
-  createImgTagPause.setAttribute('alt', 'pause')
+  createImgTagPause.setAttribute('alt', 'Pause')
 
   const createButtonPause = document.createElement('button')
   createButtonPause.setAttribute('id', 'pause-watch-study-btn')
   createButtonPause.setAttribute('class', 'timer-btn')
   createButtonPause.setAttribute('type', 'button')
-  createButtonPause.setAttribute('title', 'pause')
+  createButtonPause.setAttribute('title', 'Pause')
   createButtonPause.setAttribute('style', 'display: none')
   createButtonPause.appendChild(createImgTagPause)
+
+  const createSpanTagClock = document.createElement('span') 
+  createSpanTagClock.setAttribute('id', 'watch-mode')
   
-  createButtonPlay.addEventListener('click', () => {
-    stopedStartWatchStudy = setInterval(runWatch, 1000)
-    
-    document.getElementById('pause-watch-study-btn').style.display = 'flex'
-    
-    document.getElementById('start-watch-study-btn').style.display = 'none'
-
-    if(minutesStudy === undefined) {
-      alert('Please, configure the pomodore timer!')
-
-      minutesStudy ++
-      clearInterval(stopedStartWatchStudy)
-      document.getElementById('start-watch-study-btn').style.display = 'flex'
-      document.getElementById('pause-watch-study-btn').style.display = 'none'
-    }
-    
-  })
+  createButtonPlay.addEventListener('click', listenerOnClickButtonPlay)
   
-  createButtonPause.addEventListener('click', () => {
-    document.getElementById('pause-watch-study-btn').style.display = 'none'
-
-    document.getElementById('start-watch-study-btn').style.display = 'flex'
-
-    clearInterval(stopedStartWatchStudy)
-
-  })
+  createButtonPause.addEventListener('click', listenerOnClickButtonPause)
 
   
   const createButtonReload = document.createElement('button')
@@ -104,20 +171,7 @@ function createHTMLElementsAndStartWatch() {
   createButtonReload.setAttribute('title', 'Reload')
   createButtonReload.appendChild(createImgTagReload)
   
-  createButtonReload.addEventListener('click', () => {
-    minutesStudy = 25 
-    segundsStudy = 2
-    
-    
-    if(segundsStudy === 0) {
-      minutesStudy --
-      segundsStudy = 60
-    }
-    
-    segundsStudy --
-    
-  })
-
+  createButtonReload.addEventListener('click', listenerOnClickButtonReload)
   
   const createImgTagSettings = document.createElement('img')
   createImgTagSettings.setAttribute('class', 'image-btn')
@@ -131,13 +185,7 @@ function createHTMLElementsAndStartWatch() {
   createButtonSettings.setAttribute('title', 'settins')
   createButtonSettings.appendChild(createImgTagSettings)
 
-
-  createButtonSettings.addEventListener('click', () => {
-
-    startModal('modal-settings')
-    
-    console.log('Clicou no Settings')
-  })
+  createButtonSettings.addEventListener('click', listenerOnClickButtonSettings)
 
   const createImgTagInfo = document.createElement('img')
   createImgTagInfo.setAttribute('class', 'image-btn')
@@ -151,16 +199,17 @@ function createHTMLElementsAndStartWatch() {
   createButtonInfo.setAttribute('title', 'info')
   createButtonInfo.appendChild(createImgTagInfo)
   
-  createButtonInfo.addEventListener('click', () => {
-    console.log('Clicou no info')
-  })
+  createButtonInfo.addEventListener('click', listenerOnClickButtonInfo)
   
   const createContainerSettingsAndInfo = document.createElement('div') 
   createContainerSettingsAndInfo.setAttribute('class', 'container-settings-info')
   
+  
   createContainerSettingsAndInfo.appendChild(createButtonSettings)
   createContainerSettingsAndInfo.appendChild(createButtonInfo)
   
+  clockContainer.appendChild(createSpanTagClock)
+
   containerTimer.appendChild(createContainerSettingsAndInfo)
   
   buttonContainer.appendChild(createButtonPause)
@@ -171,10 +220,40 @@ function createHTMLElementsAndStartWatch() {
 }
   
 createHTMLElementsAndStartWatch()
+
+function runWatchBreak() {
+  clearInterval(stopedStartWatchStudy)
   
-function runWatch() {
-    
-    
+  document.getElementById('watch-mode').innerText = `${inputFormSettingsBreak.value} minutes breaking.`
+
+  if(segundsBreak === 0) {
+    minutesBreak --
+    segundsBreak = 60
+  }
+
+  if(segundsBreak === 1 && minutesBreak === 0) {
+    clearInterval(stopedStartWatchBreak)
+  }
+
+  segundsBreak --
+
+  if(segundsBreak === 0 && minutesBreak === 0) {
+    document.getElementById('start-watch-study-btn').style.display = 'flex'
+    document.getElementById('pause-watch-study-btn').style.display = 'none'
+  }
+
+  watch.innerText = `${minutesBreak < 10 ? `0${minutesBreak}`: minutesBreak}: ${segundsBreak < 10 ? `0${segundsBreak}` : segundsBreak}`
+
+}
+  
+function runWatchStudy() {
+  
+  if(inputFormSettingsStudy.value.length === 0) {
+    document.getElementById('watch-mode').style.display = 'none'
+  }
+  
+  document.getElementById('watch-mode').innerText = `${inputFormSettingsStudy.value} minutes studying.`
+
   if(segundsStudy === 0) {
     minutesStudy --
     segundsStudy = 60
@@ -200,7 +279,11 @@ function startModal(modalID) {
 
   modal.addEventListener('click', (event) => {
 
-    if(event.target.id === modalID || event.target.className === 'close-button') {
+    const isOpenModal = event.target.id === modalID || 
+                        event.target.className === 'close-button' || 
+                        event.target.id === 'save-button'
+
+    if(isOpenModal) {
       modal.classList.remove('show-modal')
     }
   })
