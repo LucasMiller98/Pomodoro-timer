@@ -13,6 +13,40 @@ let segundsBreak = 0
 let stopedStartWatchStudy = 0
 let stopedStartWatchBreak = 0
 
+function makeSoundNotification() {
+  const title = 'Success'
+  const message = 'Message'
+  const icon = 'images/bell-notification.svg'
+  const song = 'sound/water-droplet-notification-tone.mp3'
+
+  if(!('Notification' in window)) {
+    alert(`This browser doesn't suport desktop notifications`)
+  }
+
+  if(Notification.permission === 'granted') {
+    clallNotify(title, message, icon, song)
+    // return
+  }
+
+  console.log(typeof Notification.permission)
+  
+  if(Notification.permission !== 'denied') { // Default mode. Because does not denied
+    Notification.requestPermission(permission => {
+      if(permission === "granted") {
+        clallNotify(title, message, icon, song)
+      }
+    })
+
+    // return
+
+  }
+}
+
+function clallNotify(title, message, icon, song) {
+  new Notification(title, { body: message, icon: icon })
+  new Audio(song).play()
+}
+
 form.addEventListener('submit', (event) => {
   event.preventDefault()
   if(inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === '') {
@@ -259,7 +293,8 @@ function runWatchStudy() {
     segundsStudy = 60
   }
   
-  if(segundsStudy === 1 && minutesStudy === 0) {
+  if(segundsStudy === 1 && minutesStudy === 0) { // O relógio zerou  
+    makeSoundNotification()
     clearInterval(stopedStartWatchStudy)
   }
   
