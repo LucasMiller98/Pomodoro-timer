@@ -6,26 +6,34 @@ const inputFormSettingsStudy = document.getElementsByTagName('input')[0]
 const inputFormSettingsBreak = document.getElementsByTagName('input')[1]
 const form = document.getElementById('form')
 
+console.log(typeof inputFormSettingsStudy.value.length)
+
 let minutesStudy
+
+console.log(minutesStudy)
+
 let segundsStudy = 0
 let minutesBreak
 let segundsBreak = 0
 let stopedStartWatchStudy = 0
 let stopedStartWatchBreak = 0
 
-function makeSoundNotification() {
-  const title = 'Success'
-  const message = 'Message'
-  const icon = 'images/bell-notification.svg'
-  const song = 'sound/water-droplet-notification-tone.mp3'
 
+function makeSoundNotification() {
+  
+  const bell = {
+    title: 'Success',
+    message: 'Message',
+    icon: 'images/bell-notification.svg',
+    song: 'sound/water-droplet-notification-tone.mp3'
+  }
+  
   if(!('Notification' in window)) {
     alert(`This browser doesn't suport desktop notifications`)
   }
 
   if(Notification.permission === 'granted') {
-    clallNotify(title, message, icon, song)
-    // return
+    clallNotify(bell.title, bell.message, bell.icon, bell.song)
   }
 
   console.log(typeof Notification.permission)
@@ -33,18 +41,16 @@ function makeSoundNotification() {
   if(Notification.permission !== 'denied') { // Default mode. Because does not denied
     Notification.requestPermission(permission => {
       if(permission === "granted") {
-        clallNotify(title, message, icon, song)
+        clallNotify({bell})
       }
     })
-
-    // return
 
   }
 }
 
-function clallNotify(title, message, icon, song) {
-  new Notification(title, { body: message, icon: icon })
-  new Audio(song).play()
+function clallNotify({ bell }) {
+  new Notification(bell.title, { body: bell.message, icon: bell.icon })
+  new Audio(bell.song).play()
 }
 
 form.addEventListener('submit', (event) => {
@@ -56,9 +62,9 @@ form.addEventListener('submit', (event) => {
     minutesStudy = inputFormSettingsStudy.value
     minutesBreak = inputFormSettingsBreak.value
     
+    
 
     watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}`: minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
-
 
 
     console.log('Salvou')
@@ -74,6 +80,8 @@ function listenerOnClickButtonPlay() {
   
   document.getElementById('start-watch-study-btn').style.display = 'none'
 
+  
+
   if(minutesStudy === undefined) {
     alert('Please, configure the pomodore timer!')
 
@@ -83,9 +91,16 @@ function listenerOnClickButtonPlay() {
 
   }
 
-  if(minutesStudy === 0 && segundsStudy === 0) {
+  
+  console.log(typeof minutesStudy)
 
+  if(minutesStudy === 0 && segundsStudy === 0) {
+    console.log('Entrou no if linha 99')
+    console.log(minutesBreak === inputFormSettingsBreak.value)
+    
     if(minutesBreak === inputFormSettingsBreak.value) {
+      
+      console.log('if linha 104')
 
       segundsBreak = 1
       
@@ -107,10 +122,17 @@ function listenerOnClickButtonPause() {
 
   document.getElementById('start-watch-study-btn').style.display = 'flex'
   
+  
   clearInterval(stopedStartWatchStudy)
-
   
   clearInterval(stopedStartWatchBreak)
+  
+  console.log(typeof minutesStudy)
+  
+  if(minutesStudy !== 0) {
+    minutesStudy = 0
+    segundsStudy = 0
+  }
 
   console.log('break ' + minutesBreak)
   console.log('study ' + minutesStudy)
@@ -118,6 +140,7 @@ function listenerOnClickButtonPause() {
 }
 
 function listenerOnClickButtonReload() {
+
   minutesStudy = inputFormSettingsStudy.value
   segundsStudy = 2
   minutesBreak = inputFormSettingsBreak.value
@@ -127,15 +150,10 @@ function listenerOnClickButtonReload() {
     minutesStudy --
     segundsStudy = 60
   }
-
   
-  if(Number(minutesStudy) === 0) {
-    clearInterval(stopedStartWatchStudy)
-    minutesStudy = 0
-    alert('Access denied. Please, try settings the Pomodoro timer.')
-    document.getElementById('start-watch-study-btn').style.display = 'flex'
-    document.getElementById('pause-watch-study-btn').style.display = 'none'
-  }
+  console.log(typeof minutesStudy)
+  
+
   
   segundsStudy --
   
@@ -150,12 +168,10 @@ function listenerOnClickButtonReload() {
 
 function listenerOnClickButtonSettings() {
   startModal('modal-settings')
-    
-  console.log('Clicou no Settings')
 }
 
 function listenerOnClickButtonInfo() {
-  console.log('Clicou no info')
+  document.querySelector('.anchor-info')
 }
 
 function createHTMLElementsAndStartWatch() {
@@ -231,13 +247,19 @@ function createHTMLElementsAndStartWatch() {
   createButtonInfo.setAttribute('class', 'timer-btn info-popup-btn')
   createButtonInfo.setAttribute('type', 'button')
   createButtonInfo.setAttribute('title', 'info')
-  createButtonInfo.appendChild(createImgTagInfo)
+  
+  const createAnchorTag = document.createElement('a') 
+  createAnchorTag.setAttribute('class', 'anchor-info')
+  createAnchorTag.setAttribute('target', '__blank')
+  createAnchorTag.setAttribute('href', 'https://todoist.com/productivity-methods/pomodoro-technique')
+  createAnchorTag.appendChild(createImgTagInfo)
   
   createButtonInfo.addEventListener('click', listenerOnClickButtonInfo)
   
   const createContainerSettingsAndInfo = document.createElement('div') 
   createContainerSettingsAndInfo.setAttribute('class', 'container-settings-info')
   
+  createButtonInfo.appendChild(createAnchorTag)
   
   createContainerSettingsAndInfo.appendChild(createButtonSettings)
   createContainerSettingsAndInfo.appendChild(createButtonInfo)
@@ -272,6 +294,7 @@ function runWatchBreak() {
   segundsBreak --
 
   if(segundsBreak === 0 && minutesBreak === 0) {
+    makeSoundNotification()
     document.getElementById('start-watch-study-btn').style.display = 'flex'
     document.getElementById('pause-watch-study-btn').style.display = 'none'
   }
@@ -283,7 +306,13 @@ function runWatchBreak() {
 function runWatchStudy() {
   
   if(inputFormSettingsStudy.value.length === 0) {
+    clearInterval(stopedStartWatchStudy)
+    document.getElementById('start-watch-study-btn').style.display = 'flex'
+    document.getElementById('pause-watch-study-btn').style.display = 'none'
+    segundsStudy = 1
+    minutesStudy = 0
     document.getElementById('watch-mode').style.display = 'none'
+    alert('Access denied. Please, try settings the Pomodoro timer.')
   }
   
   document.getElementById('watch-mode').innerText = `${inputFormSettingsStudy.value} minutes studying.`
@@ -294,8 +323,9 @@ function runWatchStudy() {
   }
   
   if(segundsStudy === 1 && minutesStudy === 0) { // O relógio zerou  
-    makeSoundNotification()
     clearInterval(stopedStartWatchStudy)
+    alert('Click on play button to start the mode breaking.')
+    makeSoundNotification()
   }
   
   segundsStudy --
