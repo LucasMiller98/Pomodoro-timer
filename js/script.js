@@ -6,26 +6,18 @@ const inputFormSettingsStudy = document.getElementsByTagName('input')[0]
 const inputFormSettingsBreak = document.getElementsByTagName('input')[1]
 const form = document.getElementById('form')
 
-console.log(typeof inputFormSettingsStudy.value.length)
-
 let minutesStudy
-
-console.log(minutesStudy)
-
 let segundsStudy = 0
 let minutesBreak
 let segundsBreak = 0
 let stopedStartWatchStudy = 0
 let stopedStartWatchBreak = 0
 
-
 function makeSoundNotification() {
   
   const bell = {
-    title: 'Success',
-    message: 'Message',
-    icon: 'images/bell-notification.svg',
-    song: 'sound/water-droplet-notification-tone.mp3'
+    bell: 'images/bell-notification.svg',
+    song: 'sound/Bell-notification.mp3'
   }
   
   if(!('Notification' in window)) {
@@ -33,7 +25,7 @@ function makeSoundNotification() {
   }
 
   if(Notification.permission === 'granted') {
-    clallNotify(bell.title, bell.message, bell.icon, bell.song)
+    clallNotify(bell.bell, bell.song)
   }
 
   console.log(typeof Notification.permission)
@@ -49,7 +41,7 @@ function makeSoundNotification() {
 }
 
 function clallNotify({ bell }) {
-  new Notification(bell.title, { body: bell.message, icon: bell.icon })
+  new Notification({ icon: bell.icon })
   new Audio(bell.song).play()
 }
 
@@ -62,81 +54,75 @@ form.addEventListener('submit', (event) => {
     minutesStudy = inputFormSettingsStudy.value
     minutesBreak = inputFormSettingsBreak.value
     
-    
 
+    document.getElementById('watch-mode').innerText = `${inputFormSettingsStudy.value} minutes studying.`
+    
     watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}`: minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
 
-
-    console.log('Salvou')
-
-    console.log(minutesBreak)
   }
 })
 
 function listenerOnClickButtonPlay() {
   stopedStartWatchStudy = setInterval(runWatchStudy, 1000)
   
-  document.getElementById('pause-watch-study-btn').style.display = 'flex'
-  
-  document.getElementById('start-watch-study-btn').style.display = 'none'
+  const pauseButton = document.getElementById('pause-watch-study-btn')
+  const playButton = document.getElementById('start-watch-study-btn')
+  const watchModeScreen = document.getElementById('watch-mode')
 
-  
+  pauseButton.style.display = 'flex'
+  playButton.style.display = 'none'
 
+  if(minutesStudy === -1) {
+    minutesStudy = 0
+  }
+  
   if(minutesStudy === undefined) {
-    alert('Please, configure the pomodore timer!')
+    watchModeScreen.innerText = `Please, configure the pomodore timer!`
 
     clearInterval(stopedStartWatchStudy)
-    document.getElementById('start-watch-study-btn').style.display = 'flex'
-    document.getElementById('pause-watch-study-btn').style.display = 'none'
+    playButton.style.display = 'flex'
+    pauseButton.style.display = 'none'
 
   }
-
   
-  console.log(typeof minutesStudy)
-
   if(minutesStudy === 0 && segundsStudy === 0) {
-    console.log('Entrou no if linha 99')
-    console.log(minutesBreak === inputFormSettingsBreak.value)
     
     if(minutesBreak === inputFormSettingsBreak.value) {
       
-      console.log('if linha 104')
-
       segundsBreak = 1
       
-      console.log('study min' + minutesStudy)
-      console.log('study seg' + segundsStudy)
-
       stopedStartWatchBreak = setInterval(runWatchBreak, 1000)
       
-      document.getElementById('pause-watch-study-btn').style.display = 'flex'
+      pauseButton.style.display = 'flex'
   
-      document.getElementById('start-watch-study-btn').style.display = 'none'
+      playButton.style.display = 'none'
     }
   }
 
 }
 
 function listenerOnClickButtonPause() {
-  document.getElementById('pause-watch-study-btn').style.display = 'none'
+  const pauseButton = document.getElementById('pause-watch-study-btn')
+  const playButton = document.getElementById('start-watch-study-btn')
 
-  document.getElementById('start-watch-study-btn').style.display = 'flex'
+  const watchMode = document.getElementById('watch-mode').innerText
+  const watchModeSplit = watchMode.split(' ', 3)
+
+  if(watchModeSplit[2] === 'studying.') {
+    clearInterval(stopedStartWatchStudy)
+    pauseButton.style.display = 'none'
   
-  
-  clearInterval(stopedStartWatchStudy)
-  
-  clearInterval(stopedStartWatchBreak)
-  
-  console.log(typeof minutesStudy)
-  
-  if(minutesStudy !== 0) {
-    minutesStudy = 0
-    segundsStudy = 0
+    playButton.style.display = 'flex'
   }
 
-  console.log('break ' + minutesBreak)
-  console.log('study ' + minutesStudy)
+  if(watchModeSplit[2] === 'breaking.') {
 
+    clearInterval(stopedStartWatchBreak)
+    pauseButton.style.display = 'none'
+  
+    playButton.style.display = 'flex'
+  }
+  
 }
 
 function listenerOnClickButtonReload() {
@@ -150,10 +136,6 @@ function listenerOnClickButtonReload() {
     minutesStudy --
     segundsStudy = 60
   }
-  
-  console.log(typeof minutesStudy)
-  
-
   
   segundsStudy --
   
@@ -278,8 +260,11 @@ function createHTMLElementsAndStartWatch() {
 createHTMLElementsAndStartWatch()
 
 function runWatchBreak() {
-  clearInterval(stopedStartWatchStudy)
+
+  inputFormSettingsStudy.value = ' '
   
+  clearInterval(stopedStartWatchStudy)
+
   document.getElementById('watch-mode').innerText = `${inputFormSettingsBreak.value} minutes breaking.`
 
   if(segundsBreak === 0) {
@@ -298,34 +283,36 @@ function runWatchBreak() {
     document.getElementById('start-watch-study-btn').style.display = 'flex'
     document.getElementById('pause-watch-study-btn').style.display = 'none'
   }
-
-  watch.innerText = `${minutesBreak < 10 ? `0${minutesBreak}`: minutesBreak}: ${segundsBreak < 10 ? `0${segundsBreak}` : segundsBreak}`
+  
+  watch.innerText = `${minutesBreak < 10 ? `0${minutesBreak}`: minutesBreak} : ${segundsBreak < 10 ? `0${segundsBreak}` : segundsBreak}`
 
 }
   
 function runWatchStudy() {
-  
-  if(inputFormSettingsStudy.value.length === 0) {
-    clearInterval(stopedStartWatchStudy)
-    document.getElementById('start-watch-study-btn').style.display = 'flex'
-    document.getElementById('pause-watch-study-btn').style.display = 'none'
-    segundsStudy = 1
-    minutesStudy = 0
-    document.getElementById('watch-mode').style.display = 'none'
-    alert('Access denied. Please, try settings the Pomodoro timer.')
-  }
-  
-  document.getElementById('watch-mode').innerText = `${inputFormSettingsStudy.value} minutes studying.`
 
   if(segundsStudy === 0) {
     minutesStudy --
     segundsStudy = 60
   }
-  
-  if(segundsStudy === 1 && minutesStudy === 0) { // O relógio zerou  
-    clearInterval(stopedStartWatchStudy)
-    alert('Click on play button to start the mode breaking.')
-    makeSoundNotification()
+
+  const isMinutesAndSegundsEqualZero = minutesStudy === 0 && segundsStudy === 1
+
+  switch(isMinutesAndSegundsEqualZero) {
+    case true:
+      document.getElementById('watch-mode').innerText = `Click on play button to start 
+                                            the mode breaking.
+                                            `
+
+      clearInterval(stopedStartWatchStudy)
+      makeSoundNotification()
+    break
+
+    case false:
+      document.getElementById('watch-mode').innerText = `${inputFormSettingsStudy.value} minutes studying.`
+    break
+
+    default:
+      console.log('default mode.')
   }
   
   segundsStudy --
@@ -334,8 +321,8 @@ function runWatchStudy() {
     document.getElementById('start-watch-study-btn').style.display = 'flex'
     document.getElementById('pause-watch-study-btn').style.display = 'none'
   }
-  
-  watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}`: minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
+
+  watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}` : minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
 }
 
 function startModal(modalID) {
@@ -352,4 +339,17 @@ function startModal(modalID) {
       modal.classList.remove('show-modal')
     }
   })
+  
+  modal.addEventListener('keydown', (event) => {
+    
+    if(event.key.toLowerCase() === 'e') {
+      clearInputs()
+      alert('Please, type a number.')      
+    }
+  })
+}
+
+function clearInputs() {
+  inputFormSettingsBreak.value = ''
+  inputFormSettingsStudy.value = ''
 }
