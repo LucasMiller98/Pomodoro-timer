@@ -25,6 +25,12 @@ main {
   top: 3rem;
 }
 
+.info-toastfy {
+  font-size: 1.1rem;
+  background: rgb(40, 106, 90);
+  border-radius: 12px; 
+}
+
 .clock {
   font-size: 3.7rem;
   height: 44vh;
