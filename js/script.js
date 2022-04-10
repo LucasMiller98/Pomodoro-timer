@@ -51,6 +51,26 @@ function clallNotify({ bell }) {
   new Audio(bell.song).play()
 }
 
+function isInputEqualOne() {
+  const watchMode = document.getElementById('watch-mode')
+  
+  if(inputFormSettingsStudy.id === 'input-form-settings-study') {
+    if(inputFormSettingsStudy.value === '1') {
+      return watchMode.innerText = `${inputFormSettingsStudy.value} minute studying.`
+    }else{
+      return watchMode.innerText = `${inputFormSettingsStudy.value} minutes studying.`
+    }
+  }
+
+  if(inputFormSettingsBreak.id === 'input-form-settings-break') {
+    if(inputFormSettingsBreak.value === '1') {
+      return watchMode.innerText = `${inputFormSettingsBreak.value} minute breaking.`
+    }else{
+      return watchMode.innerText = `${inputFormSettingsBreak.value} minutes breaking.`
+    }
+  }
+}
+
 form.addEventListener('submit', (event) => {
   event.preventDefault()
   if(inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === '') {
@@ -64,7 +84,9 @@ form.addEventListener('submit', (event) => {
 
     minutesStudy = inputFormSettingsStudy.value
     minutesBreak = inputFormSettingsBreak.value
-
+    
+    isInputEqualOne()
+    
     Toastify({
       text: `${inputFormSettingsStudy.value} minutes studying save with successful.`,
       className: "info-toastfy",
@@ -72,14 +94,41 @@ form.addEventListener('submit', (event) => {
       position: "center", 
     }).showToast();
 
-    document.getElementById('watch-mode').innerText = `${inputFormSettingsStudy.value} minutes studying.`
     
     watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}`: minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
 
   }
 })
 
+function isMinutesBreakAndrunningWatchBreak() {
+  const pauseButton = document.getElementById('pause-watch-study-btn')
+  const playButton = document.getElementById('start-watch-study-btn')
+  const watchModeScreen = document.getElementById('watch-mode')
+  
+  if(inputFormSettingsBreak.value === '' && runWatchBreak && minutesBreak === undefined) {
+    
+    watchModeScreen.innerText = `Please, configure the pomodore timer!`
+    
+    Toastify({
+      text: `Please, configure the pomodore timer!`,
+      duration: 3000,
+      position: 'center',
+      style: {
+        background: '#de3c4b',
+        borderRadius: '12px'
+      },
+    }).showToast()
+    
+    clearInterval(stopedStartWatchBreak)
+
+    playButton.style.display = 'flex'
+    pauseButton.style.display = 'none'
+  }
+  
+}
+
 function listenerOnClickButtonPlay() {
+  
   stopedStartWatchStudy = setInterval(runWatchStudy, 1000)
 
   const pauseButton = document.getElementById('pause-watch-study-btn')
@@ -106,7 +155,29 @@ function listenerOnClickButtonPlay() {
     
     playButton.style.display = 'flex'
     pauseButton.style.display = 'none'
-    console.log('Input Vazio')
+  }
+
+  if(minutesStudy === null && segundsStudy === null && runWatchStudy) {
+    clearInterval(stopedStartWatchStudy)
+    stopedStartWatchBreak = setInterval(runWatchBreak, 1000)
+
+    console.log('if linha 115')
+
+    if(minutesBreak === undefined) {
+      Toastify({
+        text: `Please, configure the pomodore timer!`,
+        duration: 3000,
+        position: 'center',
+        style: {
+          background: '#de3c4b',
+          borderRadius: '12px'
+        },
+      }).showToast()
+
+      clearInterval(stopedStartWatchBreak)
+
+      minutesBreak = 0
+    }
   }
 
   if(minutesStudy === 0 && segundsStudy === 0) {
@@ -122,28 +193,10 @@ function listenerOnClickButtonPlay() {
       playButton.style.display = 'none'
       
     }
-  }
-
-  if(minutesStudy < 0 && segundsStudy < 60) {
-    
-    clearInterval(stopedStartWatchStudy)
-
-    Toastify({
-      text: `If you want to restart again, configure the pomodoro timer or press on button "reload".`,
-      duration: 5000,
-      position: 'center',
-      style: {
-        background: '#de3c4b',
-        borderRadius: '12px'
-      },
-    }).showToast()
-
-    playButton.style.display = 'flex'
-    pauseButton.style.display = 'none'
-
-    watchModeScreen.innerText = `Please, configure the pomodore timer!`    
 
   }
+  
+  isMinutesBreakAndrunningWatchBreak()
 }
 
 function listenerOnClickButtonPause() {
@@ -166,9 +219,10 @@ function listenerOnClickButtonPause() {
     }).showToast()
 
     clearInterval(stopedStartWatchStudy)
+    playButton.style.display = 'flex' 
+
     pauseButton.style.display = 'none'
   
-    playButton.style.display = 'flex'
   }
 
   if(watchModeSplit[2] === 'breaking.') {
@@ -182,25 +236,23 @@ function listenerOnClickButtonPause() {
         borderRadius: '12px'
       },
     }).showToast()
-
-    clearInterval(stopedStartWatchBreak)
-    pauseButton.style.display = 'none'
-  
-    playButton.style.display = 'flex'
     
+    clearInterval(stopedStartWatchBreak)
+    playButton.style.display = 'flex'
+
+    pauseButton.style.display = 'none'
   }
-  
 }
 
 function listenerOnClickButtonReload() {
-
+  
   const watchModeScreen = document.getElementById('watch-mode')
-
+  
   minutesStudy = inputFormSettingsStudy.value
   segundsStudy = 1
   minutesBreak = inputFormSettingsBreak.value
   segundsBreak = 1
-
+  
   if(runWatchStudy && inputFormSettingsStudy.value === '') {
     Toastify({
       text: `Invalid operation.`,
@@ -211,15 +263,15 @@ function listenerOnClickButtonReload() {
         borderRadius: '12px'
       },
     }).showToast()
-
+    
     watchModeScreen.innerText = `You need configure before used!`
   }
-
+  
   if(inputFormSettingsStudy.value !== '' && inputFormSettingsBreak.value !== '') {
     segundsStudy = 2
     segundsBreak = 2
   }
-
+  
   if(segundsStudy === 0) {
     minutesStudy --
     segundsStudy = 60
@@ -245,7 +297,7 @@ function listenerOnClickButtonInfo() {
 }
 
 function createHTMLElementsAndStartWatch() {
-
+  
   const createImgTagPlay = document.createElement('img')  
   createImgTagPlay.setAttribute('class', 'image-btn')
   createImgTagPlay.setAttribute('src', 'images/play.svg')
@@ -255,19 +307,19 @@ function createHTMLElementsAndStartWatch() {
   createImgTagReload.setAttribute('class', 'image-btn')
   createImgTagReload.setAttribute('src', 'images/reload.svg')
   createImgTagReload.setAttribute('alt', 'reload')
-
+  
   const createButtonPlay = document.createElement('button')
   createButtonPlay.setAttribute('id', 'start-watch-study-btn')
   createButtonPlay.setAttribute('class', 'timer-btn')
   createButtonPlay.setAttribute('type', 'button')
   createButtonPlay.setAttribute('title', 'Play')
   createButtonPlay.appendChild(createImgTagPlay)
-
+  
   const createImgTagPause = document.createElement('img')
   createImgTagPause.setAttribute('class', 'image-btn')
   createImgTagPause.setAttribute('src', 'images/pause.svg')
   createImgTagPause.setAttribute('alt', 'Pause')
-
+  
   const createButtonPause = document.createElement('button')
   createButtonPause.setAttribute('id', 'pause-watch-study-btn')
   createButtonPause.setAttribute('class', 'timer-btn')
@@ -275,14 +327,13 @@ function createHTMLElementsAndStartWatch() {
   createButtonPause.setAttribute('title', 'Pause')
   createButtonPause.setAttribute('style', 'display: none')
   createButtonPause.appendChild(createImgTagPause)
-
+  
   const createSpanTagClock = document.createElement('span') 
   createSpanTagClock.setAttribute('id', 'watch-mode')
   
   createButtonPlay.addEventListener('click', listenerOnClickButtonPlay)
   
   createButtonPause.addEventListener('click', listenerOnClickButtonPause)
-
   
   const createButtonReload = document.createElement('button')
   createButtonReload.setAttribute('id', 'reload-btn')
@@ -304,9 +355,9 @@ function createHTMLElementsAndStartWatch() {
   createButtonSettings.setAttribute('type', 'button')
   createButtonSettings.setAttribute('title', 'settins')
   createButtonSettings.appendChild(createImgTagSettings)
-
+  
   createButtonSettings.addEventListener('click', listenerOnClickButtonSettings)
-
+  
   const createImgTagInfo = document.createElement('img')
   createImgTagInfo.setAttribute('class', 'image-btn')
   createImgTagInfo.setAttribute('src', 'images/info-icon.svg')
@@ -339,125 +390,176 @@ function createHTMLElementsAndStartWatch() {
   containerTimer.appendChild(createContainerSettingsAndInfo)
   
   buttonContainer.appendChild(createButtonPause)
-
+  
   buttonContainer.appendChild(createButtonPlay)
   
   buttonContainer.appendChild(createButtonReload)
 }
-  
+
 createHTMLElementsAndStartWatch()
 
 function runWatchBreak() {
 
-  clearInterval(stopedStartWatchStudy)
+  segundsStudy = null
+  minutesStudy = null
 
+  const pauseButton = document.getElementById('pause-watch-study-btn')
+  const playButton = document.getElementById('start-watch-study-btn')
   const watchMode = document.getElementById('watch-mode')
-
+  
+  console.log('breaking')
+  
+  clearInterval(stopedStartWatchStudy)
+  
+    
   watchMode.innerText = `${inputFormSettingsBreak.value} minutes breaking.`
-
+  
   if(segundsBreak === 0) {
     minutesBreak --
     segundsBreak = 60
   }
-
+  
   if(segundsBreak === 1 && minutesBreak === 0) {
     clearInterval(stopedStartWatchBreak)
   }
-
+  
   segundsBreak --
-
+  
   if(segundsBreak === 0 && minutesBreak === 0) {
+    minutesBreak = undefined
+    clearInputs()
     makeSoundNotification()
-    document.getElementById('start-watch-study-btn').style.display = 'flex'
-    document.getElementById('pause-watch-study-btn').style.display = 'none'
+    playButton.style.display = 'flex'
+    pauseButton.style.display = 'none'
+  }
+
+  if(minutesBreak === undefined) {
+    console.log('445')
+    
+    minutesBreak = 0
+    
+    watch.innerHTML = `<span>00 : 00</span>`  
+  }
+
+  if(minutesBreak < 0) {
+    minutesBreak ++
+    clearInterval(stopedStartWatchBreak)
+    watchMode.innerHTML = `<span>Hello world!</span>`
   }
   
   watch.innerText = `${minutesBreak < 10 ? `0${minutesBreak}`: minutesBreak} : ${segundsBreak < 10 ? `0${segundsBreak}` : segundsBreak}`
 
 }
-  
+
 function runWatchStudy() {
+
+  console.log(minutesStudy)
+  
+  console.log('styding')
+  
+  const isMinutesAndSegundsEqualZero = minutesStudy === 0 && segundsStudy === 1
+  
+  const watchMode = document.getElementById('watch-mode')
+  
+  const startWatchStudyBtn = document.getElementById('start-watch-study-btn')
+  const pauseWatchStudyBtn = document.getElementById('pause-watch-study-btn')
 
   if(segundsStudy === 0) {
     minutesStudy --
     segundsStudy = 60
   }
-
-  const isMinutesAndSegundsEqualZero = minutesStudy === 0 && segundsStudy === 1
-
-  const watchMode = document.getElementById('watch-mode')
-  const startWatchStudyBtn = document.getElementById('start-watch-study-btn')
-  const pauseWatchStudyBtn = document.getElementById('pause-watch-study-btn')
-
+  
   switch(isMinutesAndSegundsEqualZero) {
     case true:
       watchMode.innerText = `Click on play button to start 
-                                            the mode breaking.
-                                            `
-
+      the mode breaking.
+      `
+      
       clearInterval(stopedStartWatchStudy)
       makeSoundNotification()
     break
-
+      
     case false:
-      watchMode.innerText = `${inputFormSettingsStudy.value} minutes studying.`
+      isInputEqualOne()
     break
   }
-  
+      
   segundsStudy --
   
   if(segundsStudy === 0 && minutesStudy === 0) {
     startWatchStudyBtn.style.display = 'flex'
     pauseWatchStudyBtn.style.display = 'none'
   }
-
+  
   watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}` : minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
+}
+
+function isInputsEqualZero() {
+  if(inputFormSettingsBreak.value === '0' || inputFormSettingsStudy.value === '0') {
+    Toastify({
+      text: `só é permitivo valor maior que 0.`,
+      className: "info-toastfy",
+      duration: 3000,
+      position: "center", 
+    }).showToast();
+
+    clearInputs()
+  }
 }
 
 function startModal(modalID) {
   const modal = document.getElementById(modalID)
   modal.classList.add('show-modal')
-
+  
   modal.addEventListener('click', (event) => {
+    
+  const isOpenModal = event.target.id === modalID || 
+  event.target.className === 'close-button' 
 
-    const isOpenModal = event.target.id === modalID || 
-                        event.target.className === 'close-button' 
-                        
-    if(isOpenModal) {
+  if(isOpenModal) {
+    modal.classList.remove('show-modal')
+  }
+
+  const isSaveButton = event.target.id === 'save-button'
+  const isInputsEmpties = inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === ''
+    
+  if(isSaveButton) {
+    if(isInputsEmpties) {
+      modal.classList.add('show-modal')
+    }
+    
+    if(!isInputsEmpties) {
       modal.classList.remove('show-modal')
     }
+  }
 
-    const isSaveButton = event.target.id === 'save-button'
-    const isInputsEmpties = inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === ''
+  isInputsEqualZero()
 
-    if(isSaveButton) {
-      if(isInputsEmpties) {
-        modal.classList.add('show-modal')
-      }
-      
-      if(!isInputsEmpties) {
-        modal.classList.remove('show-modal')
-      }
-    }
-  })
+})
   
-  modal.addEventListener('keydown', (event) => {
+modal.addEventListener('keydown', (event) => {
+  
+  if(event.key.toLowerCase() === 'e') {
+    clearInputs()
     
-    if(event.key.toLowerCase() === 'e') {
-      clearInputs()
-      
-      Toastify({
-        text: "Please, type a number on fields. Fields empties.",
-        offset: {
-          x: 50, 
-          y: 10
-        },
-      }).showToast();   
-    }
-  })
+    Toastify({
+      text: "Please, type a number on fields. Fields empties.",
+      offset: {
+        x: 50, 
+        y: 10
+      },
+    }).showToast();   
+  }
+})
 }
 
 function clearInputs() {
   inputFormSettingsBreak.value = ''
   inputFormSettingsStudy.value = ''
 }
+
+function inicialMode() {
+  document.getElementById('watch-mode').innerHTML = 'Welcome to the pomodoro timer.'
+}
+
+inicialMode()
