@@ -32,11 +32,13 @@ function makeSoundNotification() {
     }).showToast();
   }
 
-  if(Notification.permission === 'granted') {
-    clallNotify(bell.bell, bell.song)
-  }
+  // if(Notification.permission === 'granted') {
+  //   clallNotify(bell.bell, bell.song)
+  // }
+
+  // return `don't granted.`
   
-  if(Notification.permission !== 'denied') { // Default mode. Because does not denied
+  if(Notification.permission !== 'denied') {
     Notification.requestPermission(permission => {
       if(permission === "granted") {
         clallNotify({bell})
@@ -47,27 +49,19 @@ function makeSoundNotification() {
 }
 
 function clallNotify({ bell }) {
-  new Notification({ icon: bell.icon })
+  new Notification({ icon: bell.bell })
   new Audio(bell.song).play()
 }
 
 function isInputEqualOne() {
   const watchMode = document.getElementById('watch-mode')
-  
-  if(inputFormSettingsStudy.id === 'input-form-settings-study') {
-    if(inputFormSettingsStudy.value === '1') {
-      return watchMode.innerText = `${inputFormSettingsStudy.value} minute studying.`
-    }else{
-      return watchMode.innerText = `${inputFormSettingsStudy.value} minutes studying.`
-    }
+
+  if(runWatchStudy && segundsStudy !== null) {
+    return watchMode.innerText = `${inputFormSettingsStudy.value} minute studying.`
   }
 
-  if(inputFormSettingsBreak.id === 'input-form-settings-break') {
-    if(inputFormSettingsBreak.value === '1') {
-      return watchMode.innerText = `${inputFormSettingsBreak.value} minute breaking.`
-    }else{
-      return watchMode.innerText = `${inputFormSettingsBreak.value} minutes breaking.`
-    }
+  if(runWatchBreak && minutesBreak !== undefined) {
+    return watchMode.innerText = `${inputFormSettingsBreak.value} minute breaking.`
   }
 }
 
@@ -77,20 +71,26 @@ form.addEventListener('submit', (event) => {
     Toastify({
       text: "Please, type a number on fields. Fields empties.",
       className: "info-toastfy",
-      duration: 3000,
+      duration: 2000,
       position: "center"
     }).showToast();
   }else{
 
     minutesStudy = inputFormSettingsStudy.value
     minutesBreak = inputFormSettingsBreak.value
+
+    const watchMode = document.getElementById('watch-mode')
     
     isInputEqualOne()
-    
+
+    if(inputFormSettingsStudy.value !== '1') {
+      watchMode.innerText = `${inputFormSettingsStudy.value} minutes studying.`
+    }
+
     Toastify({
       text: `${inputFormSettingsStudy.value} minutes studying save with successful.`,
       className: "info-toastfy",
-      duration: 3000,
+      duration: 1000,
       position: "center", 
     }).showToast();
 
@@ -111,7 +111,7 @@ function isMinutesBreakAndrunningWatchBreak() {
     
     Toastify({
       text: `Please, configure the pomodore timer!`,
-      duration: 3000,
+      duration: 1000,
       position: 'center',
       style: {
         background: '#de3c4b',
@@ -143,7 +143,7 @@ function listenerOnClickButtonPlay() {
 
     Toastify({
       text: `Please, configure the pomodore timer!`,
-      duration: 3000,
+      duration: 1000,
       position: 'center',
       style: {
         background: '#de3c4b',
@@ -161,12 +161,12 @@ function listenerOnClickButtonPlay() {
     clearInterval(stopedStartWatchStudy)
     stopedStartWatchBreak = setInterval(runWatchBreak, 1000)
 
-    console.log('if linha 115')
-
     if(minutesBreak === undefined) {
+      watchModeScreen.innerText = `Please, configure the pomodore timer!`
+      
       Toastify({
         text: `Please, configure the pomodore timer!`,
-        duration: 3000,
+        duration: 1000,
         position: 'center',
         style: {
           background: '#de3c4b',
@@ -175,8 +175,6 @@ function listenerOnClickButtonPlay() {
       }).showToast()
 
       clearInterval(stopedStartWatchBreak)
-
-      minutesBreak = 0
     }
   }
 
@@ -193,7 +191,6 @@ function listenerOnClickButtonPlay() {
       playButton.style.display = 'none'
       
     }
-
   }
   
   isMinutesBreakAndrunningWatchBreak()
@@ -210,7 +207,7 @@ function listenerOnClickButtonPause() {
   if(watchModeSplit[2] === 'studying.') {
     Toastify({
       text: `You stoped the mode studying.`,
-      duration: 3000,
+      duration: 1000,
       position: 'center',
       style: {
         background: '#de3c4b',
@@ -229,7 +226,7 @@ function listenerOnClickButtonPause() {
 
     Toastify({
       text: `You stoped the mode breaking.`,
-      duration: 3000,
+      duration: 1000,
       position: 'center',
       style: {
         background: '#de3c4b',
@@ -400,8 +397,17 @@ createHTMLElementsAndStartWatch()
 
 function runWatchBreak() {
 
+  minutesStudy = 0
+  minutesStudy = 0
+  
+  // debugger
+
+  clearInterval(stopedStartWatchStudy)
+
   segundsStudy = null
   minutesStudy = null
+
+  isInputEqualOne()
 
   const pauseButton = document.getElementById('pause-watch-study-btn')
   const playButton = document.getElementById('start-watch-study-btn')
@@ -409,10 +415,9 @@ function runWatchBreak() {
   
   console.log('breaking')
   
-  clearInterval(stopedStartWatchStudy)
-  
-    
-  watchMode.innerText = `${inputFormSettingsBreak.value} minutes breaking.`
+  if(inputFormSettingsBreak.value !== '1') {
+    watchMode.innerText = `${inputFormSettingsBreak.value} minutes breaking.`
+  }
   
   if(segundsBreak === 0) {
     minutesBreak --
@@ -429,32 +434,19 @@ function runWatchBreak() {
     minutesBreak = undefined
     clearInputs()
     makeSoundNotification()
+    watchMode.innerText = `Finish.`
     playButton.style.display = 'flex'
     pauseButton.style.display = 'none'
   }
 
-  if(minutesBreak === undefined) {
-    console.log('445')
     
-    minutesBreak = 0
-    
-    watch.innerHTML = `<span>00 : 00</span>`  
-  }
-
-  if(minutesBreak < 0) {
-    minutesBreak ++
-    clearInterval(stopedStartWatchBreak)
-    watchMode.innerHTML = `<span>Hello world!</span>`
-  }
-  
-  watch.innerText = `${minutesBreak < 10 ? `0${minutesBreak}`: minutesBreak} : ${segundsBreak < 10 ? `0${segundsBreak}` : segundsBreak}`
-
+  watch.innerText = `${minutesBreak === undefined ? '00 : 00' : 
+                    `${minutesBreak < 10 ? `0${minutesBreak}`: 
+                      minutesBreak} : ${segundsBreak < 10 ? `0${segundsBreak}` : segundsBreak}`}` 
 }
 
 function runWatchStudy() {
 
-  console.log(minutesStudy)
-  
   console.log('styding')
   
   const isMinutesAndSegundsEqualZero = minutesStudy === 0 && segundsStudy === 1
@@ -481,6 +473,9 @@ function runWatchStudy() {
       
     case false:
       isInputEqualOne()
+      if(inputFormSettingsStudy.value !== '1') {
+        watchMode.innerText = `${inputFormSettingsStudy.value} minutes studying.`
+      }
     break
   }
       
@@ -563,3 +558,22 @@ function inicialMode() {
 }
 
 inicialMode()
+
+function getMyUserFormGithub() {
+  axios('https://api.github.com/users/lucasmiller98')
+    .then(response => {
+      getDataGithub(response.data)
+  })
+}
+
+function getDataGithub(data) {
+  const span = document.createElement('span')
+  span.setAttribute('class', 'span-name')
+  span.innerText = `Pomodoro by ${data.name}`
+
+  containerTimer.appendChild(span)
+
+  return span
+}
+
+getMyUserFormGithub()
