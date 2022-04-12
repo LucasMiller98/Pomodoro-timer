@@ -7,7 +7,7 @@
 }
 
 body {
-  background: #444242;
+  background: #303030;
 }
 
 main {
@@ -279,4 +279,14 @@ main {
   padding-top: 1rem;
 
   border-bottom: 1.7px solid #141414;
+}
+
+.span-name {
+  display: flex;
+  justify-content: flex-end;
+  width: 93%;
+  padding-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #131313;
 }
