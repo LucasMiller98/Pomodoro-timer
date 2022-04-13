@@ -13,12 +13,12 @@ let segundsBreak = 0
 let stopedStartWatchStudy = 0
 let stopedStartWatchBreak = 0
 
-function makeSoundNotification() {
-  
-  const bell = {
-    bell: 'images/bell-notification.svg',
-    song: 'sound/Bell-notification.mp3'
-  }
+const bell = {
+  bell: 'images/bell-notification.svg',
+  song: 'sound/Bell-notification.mp3'
+}
+
+const makeSoundNotification = () => {
   
   if(!('Notification' in window)) {
     Toastify({
@@ -32,11 +32,9 @@ function makeSoundNotification() {
     }).showToast();
   }
 
-  // if(Notification.permission === 'granted') {
-  //   clallNotify(bell.bell, bell.song)
-  // }
-
-  // return `don't granted.`
+  if(Notification.permission === 'granted') {
+    clallNotify(bell.bell, bell.song)
+  }
   
   if(Notification.permission !== 'denied') {
     Notification.requestPermission(permission => {
@@ -44,16 +42,16 @@ function makeSoundNotification() {
         clallNotify({bell})
       }
     })
-
   }
+  
 }
 
-function clallNotify({ bell }) {
+const clallNotify = ({ bell }) => {
   new Notification({ icon: bell.bell })
   new Audio(bell.song).play()
 }
 
-function isInputEqualOne() {
+const isInputEqualOne = () => {
   const watchMode = document.getElementById('watch-mode')
 
   if(runWatchStudy && segundsStudy !== null) {
@@ -82,25 +80,17 @@ form.addEventListener('submit', (event) => {
     const watchMode = document.getElementById('watch-mode')
     
     isInputEqualOne()
-
+    
     if(inputFormSettingsStudy.value !== '1') {
       watchMode.innerText = `${inputFormSettingsStudy.value} minutes studying.`
     }
 
-    Toastify({
-      text: `${inputFormSettingsStudy.value} minutes studying save with successful.`,
-      className: "info-toastfy",
-      duration: 1000,
-      position: "center", 
-    }).showToast();
-
-    
     watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}`: minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
 
   }
 })
 
-function isMinutesBreakAndrunningWatchBreak() {
+const isMinutesBreakAndrunningWatchBreak = () => {
   const pauseButton = document.getElementById('pause-watch-study-btn')
   const playButton = document.getElementById('start-watch-study-btn')
   const watchModeScreen = document.getElementById('watch-mode')
@@ -108,17 +98,7 @@ function isMinutesBreakAndrunningWatchBreak() {
   if(inputFormSettingsBreak.value === '' && runWatchBreak && minutesBreak === undefined) {
     
     watchModeScreen.innerText = `Please, configure the pomodore timer!`
-    
-    Toastify({
-      text: `Please, configure the pomodore timer!`,
-      duration: 1000,
-      position: 'center',
-      style: {
-        background: '#de3c4b',
-        borderRadius: '12px'
-      },
-    }).showToast()
-    
+  
     clearInterval(stopedStartWatchBreak)
 
     playButton.style.display = 'flex'
@@ -127,7 +107,7 @@ function isMinutesBreakAndrunningWatchBreak() {
   
 }
 
-function listenerOnClickButtonPlay() {
+const listenerOnClickButtonPlay = () => {
   
   stopedStartWatchStudy = setInterval(runWatchStudy, 1000)
 
@@ -141,16 +121,6 @@ function listenerOnClickButtonPlay() {
   if(inputFormSettingsStudy.value === '' && runWatchStudy || minutesStudy === undefined) {
     watchModeScreen.innerText = `Please, configure the pomodore timer!`
 
-    Toastify({
-      text: `Please, configure the pomodore timer!`,
-      duration: 1000,
-      position: 'center',
-      style: {
-        background: '#de3c4b',
-        borderRadius: '12px'
-      },
-    }).showToast()
-    
     clearInterval(stopedStartWatchStudy)
     
     playButton.style.display = 'flex'
@@ -164,16 +134,6 @@ function listenerOnClickButtonPlay() {
     if(minutesBreak === undefined) {
       watchModeScreen.innerText = `Please, configure the pomodore timer!`
       
-      Toastify({
-        text: `Please, configure the pomodore timer!`,
-        duration: 1000,
-        position: 'center',
-        style: {
-          background: '#de3c4b',
-          borderRadius: '12px'
-        },
-      }).showToast()
-
       clearInterval(stopedStartWatchBreak)
     }
   }
@@ -196,7 +156,7 @@ function listenerOnClickButtonPlay() {
   isMinutesBreakAndrunningWatchBreak()
 }
 
-function listenerOnClickButtonPause() {
+const listenerOnClickButtonPause = () => {
   
   const pauseButton = document.getElementById('pause-watch-study-btn')
   const playButton = document.getElementById('start-watch-study-btn')
@@ -241,7 +201,7 @@ function listenerOnClickButtonPause() {
   }
 }
 
-function listenerOnClickButtonReload() {
+const listenerOnClickButtonReload = () => {
   
   const watchModeScreen = document.getElementById('watch-mode')
   
@@ -261,7 +221,7 @@ function listenerOnClickButtonReload() {
       },
     }).showToast()
     
-    watchModeScreen.innerText = `You need configure before used!`
+    watchModeScreen.innerText = `You need configure before use it!`
   }
   
   if(inputFormSettingsStudy.value !== '' && inputFormSettingsBreak.value !== '') {
@@ -285,15 +245,15 @@ function listenerOnClickButtonReload() {
   
 }
 
-function listenerOnClickButtonSettings() {
+const listenerOnClickButtonSettings = () => {
   startModal('modal-settings')
 }
 
-function listenerOnClickButtonInfo() {
+const listenerOnClickButtonInfo = () => {
   document.querySelector('.anchor-info')
 }
 
-function createHTMLElementsAndStartWatch() {
+const createHTMLElementsAndStartWatch = () => {
   
   const createImgTagPlay = document.createElement('img')  
   createImgTagPlay.setAttribute('class', 'image-btn')
@@ -395,13 +355,8 @@ function createHTMLElementsAndStartWatch() {
 
 createHTMLElementsAndStartWatch()
 
-function runWatchBreak() {
-
-  minutesStudy = 0
-  minutesStudy = 0
+const runWatchBreak = () => {
   
-  // debugger
-
   clearInterval(stopedStartWatchStudy)
 
   segundsStudy = null
@@ -412,8 +367,6 @@ function runWatchBreak() {
   const pauseButton = document.getElementById('pause-watch-study-btn')
   const playButton = document.getElementById('start-watch-study-btn')
   const watchMode = document.getElementById('watch-mode')
-  
-  console.log('breaking')
   
   if(inputFormSettingsBreak.value !== '1') {
     watchMode.innerText = `${inputFormSettingsBreak.value} minutes breaking.`
@@ -438,23 +391,20 @@ function runWatchBreak() {
     playButton.style.display = 'flex'
     pauseButton.style.display = 'none'
   }
-
     
   watch.innerText = `${minutesBreak === undefined ? '00 : 00' : 
                     `${minutesBreak < 10 ? `0${minutesBreak}`: 
                       minutesBreak} : ${segundsBreak < 10 ? `0${segundsBreak}` : segundsBreak}`}` 
 }
 
-function runWatchStudy() {
+const runWatchStudy = () => {
 
-  console.log('styding')
-  
-  const isMinutesAndSegundsEqualZero = minutesStudy === 0 && segundsStudy === 1
-  
   const watchMode = document.getElementById('watch-mode')
   
   const startWatchStudyBtn = document.getElementById('start-watch-study-btn')
   const pauseWatchStudyBtn = document.getElementById('pause-watch-study-btn')
+
+  const isMinutesAndSegundsEqualZero = minutesStudy === 0 && segundsStudy === 1
 
   if(segundsStudy === 0) {
     minutesStudy --
@@ -466,22 +416,21 @@ function runWatchStudy() {
       watchMode.innerText = `Click on play button to start 
       the mode breaking.
       `
-      
       clearInterval(stopedStartWatchStudy)
-      makeSoundNotification()
     break
-      
+    
     case false:
-      isInputEqualOne()
-      if(inputFormSettingsStudy.value !== '1') {
-        watchMode.innerText = `${inputFormSettingsStudy.value} minutes studying.`
-      }
+    isInputEqualOne()
+    if(inputFormSettingsStudy.value !== '1') {
+      watchMode.innerText = `${inputFormSettingsStudy.value} minutes studying.`
+    }
     break
   }
       
   segundsStudy --
-  
+    
   if(segundsStudy === 0 && minutesStudy === 0) {
+    makeSoundNotification()
     startWatchStudyBtn.style.display = 'flex'
     pauseWatchStudyBtn.style.display = 'none'
   }
@@ -489,20 +438,26 @@ function runWatchStudy() {
   watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}` : minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
 }
 
-function isInputsEqualZero() {
+const isInputsLessOrEqualZero = () => {
+  
   if(inputFormSettingsBreak.value === '0' || inputFormSettingsStudy.value === '0') {
+
+    console.log('foi')
+    
     Toastify({
-      text: `só é permitivo valor maior que 0.`,
+      text: `Invalid value.`,
       className: "info-toastfy",
-      duration: 3000,
+      duration: 2000,
       position: "center", 
     }).showToast();
 
     clearInputs()
+
   }
+  
 }
 
-function startModal(modalID) {
+const startModal = (modalID) => {
   const modal = document.getElementById(modalID)
   modal.classList.add('show-modal')
   
@@ -517,7 +472,7 @@ function startModal(modalID) {
 
   const isSaveButton = event.target.id === 'save-button'
   const isInputsEmpties = inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === ''
-    
+  
   if(isSaveButton) {
     if(isInputsEmpties) {
       modal.classList.add('show-modal')
@@ -527,53 +482,85 @@ function startModal(modalID) {
       modal.classList.remove('show-modal')
     }
   }
-
-  isInputsEqualZero()
-
+  
+  isInputsLessOrEqualZero()
 })
   
 modal.addEventListener('keydown', (event) => {
   
   if(event.key.toLowerCase() === 'e') {
-    clearInputs()
-    
-    Toastify({
-      text: "Please, type a number on fields. Fields empties.",
-      offset: {
-        x: 50, 
-        y: 10
-      },
-    }).showToast();   
-  }
-})
+      clearInputs()
+      
+      Toastify({
+        text: "Please, type a number on fields. Fields empties.",
+        offset: {
+          x: 50, 
+          y: 10
+        },
+      }).showToast();   
+    }
+  })
+
+  modal.addEventListener('input', inputsValidations)
 }
 
-function clearInputs() {
+const inputsValidations = (event) => {
+  let valuesInputs = event.target.value
+  const numBlockes = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09']
+
+  if(valuesInputs.length > 2) {
+    event.target.value = valuesInputs.substring(0, 2)
+    return
+  }
+
+  if(numBlockes.includes(valuesInputs)) {
+    event.target.value = valuesInputs.substring(0, 1)
+    return
+  }
+
+}
+
+const clearInputs = () => {
   inputFormSettingsBreak.value = ''
   inputFormSettingsStudy.value = ''
 }
 
-function inicialMode() {
+const inicialMode = () => {
   document.getElementById('watch-mode').innerHTML = 'Welcome to the pomodoro timer.'
 }
 
 inicialMode()
 
-function getMyUserFormGithub() {
-  axios('https://api.github.com/users/lucasmiller98')
+const getMyUserFormGithub = () => {
+  fetch('https://api.github.com/users/lucasmiller98')
     .then(response => {
-      getDataGithub(response.data)
+      return response.json()
+  }).then(data => {
+    getDataGithub(data)
   })
 }
 
-function getDataGithub(data) {
+const getDataGithub = (data) => {
+  const containerPomodoro = document.getElementById('container-pomodoro')
+  
   const span = document.createElement('span')
   span.setAttribute('class', 'span-name')
   span.innerText = `Pomodoro by ${data.name}`
+  
+  const img = document.createElement('img')
+  img.setAttribute('class', 'img-avatar')
+  img.setAttribute('src', data.avatar_url)
+  
+  const anchor = document.createElement('a')
+  anchor.setAttribute('title', 'Github')
+  anchor.setAttribute('class', 'anchor-url-github')
+  anchor.setAttribute('target', '__blank')
+  anchor.setAttribute('href', data.html_url)
 
+  containerPomodoro.appendChild(img)
+  containerPomodoro.appendChild(anchor)
+  anchor.appendChild(img)
   containerTimer.appendChild(span)
-
-  return span
 }
 
 getMyUserFormGithub()
