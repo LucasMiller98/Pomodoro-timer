@@ -49,6 +49,8 @@ const makeSoundNotification = () => {
 const clallNotify = ({ bell }) => {
   new Notification({ icon: bell.bell })
   new Audio(bell.song).play()
+
+  makeSoundNotification()
 }
 
 const isInputEqualOne = () => {
@@ -67,9 +69,9 @@ form.addEventListener('submit', (event) => {
   event.preventDefault()
   if(inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === '') {
     Toastify({
-      text: "Please, type a number on fields. Fields empties.",
+      text: "Please, inform a number on fields. The fields are empties.",
       className: "info-toastfy",
-      duration: 2000,
+      duration: 5000,
       position: "center"
     }).showToast();
   }else{
@@ -117,7 +119,7 @@ const listenerOnClickButtonPlay = () => {
 
   pauseButton.style.display = 'flex'
   playButton.style.display = 'none'
-  
+
   if(inputFormSettingsStudy.value === '' && runWatchStudy || minutesStudy === undefined) {
     watchModeScreen.innerText = `Please, configure the pomodore timer!`
 
@@ -167,7 +169,7 @@ const listenerOnClickButtonPause = () => {
   if(watchModeSplit[2] === 'studying.') {
     Toastify({
       text: `You stoped the mode studying.`,
-      duration: 1000,
+      duration: 3000,
       position: 'center',
       style: {
         background: '#de3c4b',
@@ -186,7 +188,7 @@ const listenerOnClickButtonPause = () => {
 
     Toastify({
       text: `You stoped the mode breaking.`,
-      duration: 1000,
+      duration: 3000,
       position: 'center',
       style: {
         background: '#de3c4b',
@@ -213,7 +215,7 @@ const listenerOnClickButtonReload = () => {
   if(runWatchStudy && inputFormSettingsStudy.value === '') {
     Toastify({
       text: `Invalid operation.`,
-      duration: 1000,
+      duration: 2000,
       position: 'center',
       style: {
         background: '#de3c4b',
@@ -507,6 +509,7 @@ modal.addEventListener('keydown', (event) => {
 const inputsValidations = (event) => {
   let valuesInputs = event.target.value
   const numBlockes = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09']
+  // const regex = 
 
   if(valuesInputs.length > 2) {
     event.target.value = valuesInputs.substring(0, 2)
