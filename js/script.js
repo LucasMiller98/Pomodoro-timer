@@ -13,12 +13,13 @@ let segundsBreak = 0
 let stopedStartWatchStudy = 0
 let stopedStartWatchBreak = 0
 
+const bell = {
+  bell: 'images/bell-notification.svg',
+  song: 'sound/Bell-notification.mp3'
+}
+
 const makeSoundNotification = () => {
 
-  const bell = {
-    bell: 'images/bell-notification.svg',
-    song: 'sound/Bell-notification.mp3'
-  }
   
   if(!('Notification' in window)) {
     Toastify({
@@ -32,18 +33,22 @@ const makeSoundNotification = () => {
     }).showToast();
   }
 
-  // if(Notification.permission === 'granted') {
-  //   clallNotify(bell.bell, bell.song)
-  // }
+  if(Notification.permission === 'granted') {
+    // clallNotify(bell.bell, bell.song)
+    return
+  }
   
-  // if(Notification.permission !== 'denied') {
-  //   Notification.requestPermission(permission => {
-  //     if(permission === "granted") {
-  //       clallNotify({bell})
-  //     }
-  //   })
-  // } 
+  if(Notification.permission !== 'denied') {
+    Notification.requestPermission(permission => {
+      if(permission === "granted") {
+        // clallNotify({bell})
+        return
+      }
+    })
+  } 
 }
+
+makeSoundNotification()
 
 const clallNotify = ({ bell }) => {
   new Notification({ icon: bell.bell })
@@ -385,7 +390,7 @@ const runWatchBreak = () => {
   if(segundsBreak === 0 && minutesBreak === 0) {
     minutesBreak = undefined
     clearInputs()
-    makeSoundNotification()
+    clallNotify({ bell })
     watchMode.innerText = `Finish.`
     playButton.style.display = 'flex'
     pauseButton.style.display = 'none'
@@ -429,7 +434,7 @@ const runWatchStudy = () => {
   segundsStudy --
     
   if(segundsStudy === 0 && minutesStudy === 0) {
-    makeSoundNotification()
+    clallNotify({ bell })
     startWatchStudyBtn.style.display = 'flex'
     pauseWatchStudyBtn.style.display = 'none'
   }
