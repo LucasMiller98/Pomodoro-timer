@@ -466,9 +466,25 @@ const startModal = (modalID) => {
   if(isOpenModal) {
     modal.classList.remove('show-modal')
   }
-
+  
   const isSaveButton = event.target.id === 'save-button'
   const isInputsEmpties = inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === ''
+
+  if(isOpenModal && !isSaveButton && inputFormSettingsStudy.value !== '' && inputFormSettingsBreak.value !== '') {
+    clearInputs()
+
+    Toastify({
+      text: `Form empty. Please, fill out and save it.`,
+      className: "info-toastfy",
+      duration: 4000,
+      position: "center", 
+    }).showToast();
+    
+    minutesStudy = undefined
+    segundsStudy = undefined
+    minutesBreak = undefined
+    segundsBreak = undefined
+  }
   
   if(isSaveButton) {
     if(isInputsEmpties) {
@@ -503,7 +519,7 @@ modal.addEventListener('keydown', (event) => {
 
 const inputsValidations = (event) => {
   let inputsValues = event.target.value
-  const numBlockes = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09']
+  const numBlockes = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '-1']
   const regExp = /\.|6.+|7.+|8.+|9.+/
 
   if(inputsValues.length > 2) {
