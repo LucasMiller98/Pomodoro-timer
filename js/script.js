@@ -358,8 +358,8 @@ const runWatchBreak = () => {
   
   clearInterval(stopedStartWatchStudy)
 
-  segundsStudy = null
   minutesStudy = null
+  segundsStudy = null
 
   isInputEqualOne()
 
