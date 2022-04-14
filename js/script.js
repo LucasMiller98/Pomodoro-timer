@@ -13,12 +13,12 @@ let segundsBreak = 0
 let stopedStartWatchStudy = 0
 let stopedStartWatchBreak = 0
 
-const bell = {
-  bell: 'images/bell-notification.svg',
-  song: 'sound/Bell-notification.mp3'
-}
-
 const makeSoundNotification = () => {
+
+  const bell = {
+    bell: 'images/bell-notification.svg',
+    song: 'sound/Bell-notification.mp3'
+  }
   
   if(!('Notification' in window)) {
     Toastify({
@@ -32,25 +32,22 @@ const makeSoundNotification = () => {
     }).showToast();
   }
 
-  if(Notification.permission === 'granted') {
-    clallNotify(bell.bell, bell.song)
-  }
+  // if(Notification.permission === 'granted') {
+  //   clallNotify(bell.bell, bell.song)
+  // }
   
-  if(Notification.permission !== 'denied') {
-    Notification.requestPermission(permission => {
-      if(permission === "granted") {
-        clallNotify({bell})
-      }
-    })
-  }
-  
+  // if(Notification.permission !== 'denied') {
+  //   Notification.requestPermission(permission => {
+  //     if(permission === "granted") {
+  //       clallNotify({bell})
+  //     }
+  //   })
+  // } 
 }
 
 const clallNotify = ({ bell }) => {
   new Notification({ icon: bell.bell })
   new Audio(bell.song).play()
-
-  makeSoundNotification()
 }
 
 const isInputEqualOne = () => {
@@ -444,8 +441,6 @@ const isInputsLessOrEqualZero = () => {
   
   if(inputFormSettingsBreak.value === '0' || inputFormSettingsStudy.value === '0') {
 
-    console.log('foi')
-    
     Toastify({
       text: `Invalid value.`,
       className: "info-toastfy",
@@ -490,7 +485,7 @@ const startModal = (modalID) => {
   
 modal.addEventListener('keydown', (event) => {
   
-  if(event.key.toLowerCase() === 'e') {
+  if(event.key.toLowerCase() === 'e' || event.code === 'Period' || event.key === '+' || event.key === '-') {
       clearInputs()
       
       Toastify({
@@ -507,17 +502,22 @@ modal.addEventListener('keydown', (event) => {
 }
 
 const inputsValidations = (event) => {
-  let valuesInputs = event.target.value
+  let inputsValues = event.target.value
   const numBlockes = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09']
-  // const regex = 
+  const regExp = /\.|6.+|7.+|8.+|9.+/
 
-  if(valuesInputs.length > 2) {
-    event.target.value = valuesInputs.substring(0, 2)
+  if(inputsValues.length > 2) {
+    event.target.value = inputsValues.substring(0, 2)
     return
   }
-
-  if(numBlockes.includes(valuesInputs)) {
-    event.target.value = valuesInputs.substring(0, 1)
+  
+  if(numBlockes.includes(inputsValues)) {
+    event.target.value = inputsValues.substring(0, 1)
+    return
+  }
+  
+  if(inputFormSettingsStudy.value.match(regExp) || inputFormSettingsBreak.value.match(regExp)) {
+    event.target.value = inputsValues.substring(0, 1)
     return
   }
 
