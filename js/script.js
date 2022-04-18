@@ -18,44 +18,52 @@ const bell = {
   song: 'sound/Bell-notification.mp3'
 }
 
-const makeSoundNotification = () => {
-
+// function permissionValidation() {
   
-  if(!('Notification' in window)) {
-    Toastify({
-      text: `This browser doesn't suport desktop notifications`,
-      className: "info-toastfy",
-      duration: 3000,
-      position: "center", 
-      style: {
-        background: "linear-gradient(to right, #00b09b, #96c93d)",
-      }
-    }).showToast();
-  }
+//   if(!('Notification' in window)) {
+//     Toastify({
+//       text: `This browser doesn't suport desktop notifications`,
+//       className: "info-toastfy",
+//       duration: 3000,
+//       position: "center", 
+//       style: {
+//         background: "linear-gradient(to right, #00b09b, #96c93d)",
+//       }
+//     }).showToast();
+//   }
 
-  if(Notification.permission === 'granted') {
-    // clallNotify(bell.bell, bell.song)
-    return
-  }
+//   if(Notification.permission === 'granted') {
+//     console.log('permitido')
+//     new Notification({ icon: bell.bell })
+//     // return
+//   }
   
-  if(Notification.permission !== 'denied') {
-    Notification.requestPermission(permission => {
-      if(permission === "granted") {
-        // clallNotify({bell})
-        return
-      }
-    })
-  } 
-}
+//   if(Notification.permission !== 'denied' || Notification.permission === 'default') {
+//     console.log('Blocked')
+//     // new Notification({ icon: bell.bell })
+//     new Audio(bell.song).pause()
+//     Notification.requestPermission().then(result => {
+//       if(result === 'granted') {
+//         new Notification({ icon: bell.bell })
+//       }
+//     })
 
-makeSoundNotification()
+//     // if(permission === "granted") {
+//     //   // console.log(permission === "granted")
+//     //   // console.log(new Notification({ icon: bell.bell }))
+//     //   // return
+//     // }
+//   } 
+// }
 
-const clallNotify = ({ bell }) => {
+// permissionValidation()
+
+function clallNotify() {
   new Notification({ icon: bell.bell })
   new Audio(bell.song).play()
 }
 
-const isInputEqualOne = () => {
+function isInputEqualOne() {
   const watchMode = document.getElementById('watch-mode')
 
   if(runWatchStudy && segundsStudy !== null) {
@@ -81,6 +89,7 @@ form.addEventListener('submit', (event) => {
     minutesStudy = inputFormSettingsStudy.value
     minutesBreak = inputFormSettingsBreak.value
 
+
     const watchMode = document.getElementById('watch-mode')
     
     isInputEqualOne()
@@ -94,7 +103,7 @@ form.addEventListener('submit', (event) => {
   }
 })
 
-const isMinutesBreakAndrunningWatchBreak = () => {
+function isMinutesBreakAndrunningWatchBreak() {
   const pauseButton = document.getElementById('pause-watch-study-btn')
   const playButton = document.getElementById('start-watch-study-btn')
   const watchModeScreen = document.getElementById('watch-mode')
@@ -111,7 +120,7 @@ const isMinutesBreakAndrunningWatchBreak = () => {
   
 }
 
-const listenerOnClickButtonPlay = () => {
+function listenerOnClickButtonPlay() {
   
   stopedStartWatchStudy = setInterval(runWatchStudy, 1000)
 
@@ -160,7 +169,7 @@ const listenerOnClickButtonPlay = () => {
   isMinutesBreakAndrunningWatchBreak()
 }
 
-const listenerOnClickButtonPause = () => {
+function listenerOnClickButtonPause() {
   
   const pauseButton = document.getElementById('pause-watch-study-btn')
   const playButton = document.getElementById('start-watch-study-btn')
@@ -205,7 +214,7 @@ const listenerOnClickButtonPause = () => {
   }
 }
 
-const listenerOnClickButtonReload = () => {
+function listenerOnClickButtonReload() {
   
   const watchModeScreen = document.getElementById('watch-mode')
   
@@ -249,15 +258,15 @@ const listenerOnClickButtonReload = () => {
   
 }
 
-const listenerOnClickButtonSettings = () => {
+function listenerOnClickButtonSettings() {
   startModal('modal-settings')
 }
 
-const listenerOnClickButtonInfo = () => {
+function listenerOnClickButtonInfo() {
   document.querySelector('.anchor-info')
 }
 
-const createHTMLElementsAndStartWatch = () => {
+function createHTMLElementsAndStartWatch() {
   
   const createImgTagPlay = document.createElement('img')  
   createImgTagPlay.setAttribute('class', 'image-btn')
@@ -359,7 +368,7 @@ const createHTMLElementsAndStartWatch = () => {
 
 createHTMLElementsAndStartWatch()
 
-const runWatchBreak = () => {
+function runWatchBreak() {
   
   clearInterval(stopedStartWatchStudy)
 
@@ -390,7 +399,7 @@ const runWatchBreak = () => {
   if(segundsBreak === 0 && minutesBreak === 0) {
     minutesBreak = undefined
     clearInputs()
-    clallNotify({ bell })
+    clallNotify()
     watchMode.innerText = `Finish.`
     playButton.style.display = 'flex'
     pauseButton.style.display = 'none'
@@ -401,7 +410,7 @@ const runWatchBreak = () => {
                       minutesBreak} : ${segundsBreak < 10 ? `0${segundsBreak}` : segundsBreak}`}` 
 }
 
-const runWatchStudy = () => {
+function runWatchStudy() {
 
   const watchMode = document.getElementById('watch-mode')
   
@@ -434,7 +443,7 @@ const runWatchStudy = () => {
   segundsStudy --
     
   if(segundsStudy === 0 && minutesStudy === 0) {
-    clallNotify({ bell })
+    clallNotify()
     startWatchStudyBtn.style.display = 'flex'
     pauseWatchStudyBtn.style.display = 'none'
   }
@@ -442,24 +451,7 @@ const runWatchStudy = () => {
   watch.innerText = `${minutesStudy < 10 ? `0${minutesStudy}` : minutesStudy} : ${segundsStudy < 10 ? `0${segundsStudy}`: segundsStudy}`
 }
 
-const isInputsLessOrEqualZero = () => {
-  
-  if(inputFormSettingsBreak.value === '0' || inputFormSettingsStudy.value === '0') {
-
-    Toastify({
-      text: `Invalid value.`,
-      className: "info-toastfy",
-      duration: 2000,
-      position: "center", 
-    }).showToast();
-
-    clearInputs()
-
-  }
-  
-}
-
-const startModal = (modalID) => {
+function startModal(modalID) {
   const modal = document.getElementById(modalID)
   modal.classList.add('show-modal')
   
@@ -475,20 +467,23 @@ const startModal = (modalID) => {
   const isSaveButton = event.target.id === 'save-button'
   const isInputsEmpties = inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === ''
 
-  if(isOpenModal && !isSaveButton && inputFormSettingsStudy.value !== '' && inputFormSettingsBreak.value !== '') {
-    clearInputs()
+  if(!isSaveButton && isOpenModal) {
 
-    Toastify({
-      text: `Form empty. Please, fill out and save it.`,
-      className: "info-toastfy",
-      duration: 4000,
-      position: "center", 
-    }).showToast();
-    
-    minutesStudy = undefined
-    segundsStudy = undefined
-    minutesBreak = undefined
-    segundsBreak = undefined
+    if(inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === '') {
+      inputFormSettingsBreak.value = '1'
+      inputFormSettingsStudy.value = '1'
+      minutesStudy = inputFormSettingsStudy.value
+      minutesBreak = inputFormSettingsBreak.value
+      
+      Toastify({
+        text: `Invalid value.`,
+        className: "info-toastfy",
+        duration: 2000,
+        position: "center", 
+      }).showToast();
+
+      return
+    }
   }
   
   if(isSaveButton) {
@@ -501,30 +496,30 @@ const startModal = (modalID) => {
     }
   }
   
-  isInputsLessOrEqualZero()
 })
   
-modal.addEventListener('keydown', (event) => {
-  
-  if(event.key.toLowerCase() === 'e' || event.code === 'Period' || event.key === '+' || event.key === '-') {
-      clearInputs()
+  modal.addEventListener('keydown', (event) => {
+    
+    if(event.key.toLowerCase() === 'e' || event.code === 'Period' || event.key === '+' || event.key === '-') {
       
-      Toastify({
-        text: "Please, type a number on fields. Fields empties.",
-        offset: {
-          x: 50, 
-          y: 10
-        },
-      }).showToast();   
-    }
-  })
+        clearInputs()
+        
+        Toastify({
+          text: "Please, type a number on fields. Fields empties.",
+          offset: {
+            x: 50, 
+            y: 10
+          },
+        }).showToast();   
+      }
+    })
 
   modal.addEventListener('input', inputsValidations)
 }
 
-const inputsValidations = (event) => {
+function inputsValidations(event) {
   let inputsValues = event.target.value
-  const numBlockes = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '-1']
+  const numBlockes = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '-1', '0']
   const regExp = /\.|6.+|7.+|8.+|9.+/
 
   if(inputsValues.length > 2) {
@@ -534,28 +529,38 @@ const inputsValidations = (event) => {
   
   if(numBlockes.includes(inputsValues)) {
     event.target.value = inputsValues.substring(0, 1)
+    if(inputsValues === '0') {
+      event.target.value = inputsValues.replace(0, 1)
+      
+      Toastify({
+        text: `Invalid value.`,
+        className: "info-toastfy",
+        duration: 2000,
+        position: "center", 
+      }).showToast();
+    }
     return
   }
-  
-  if(inputFormSettingsStudy.value.match(regExp) || inputFormSettingsBreak.value.match(regExp)) {
+
+  if(inputsValues.match(regExp)) {
     event.target.value = inputsValues.substring(0, 1)
     return
   }
 
 }
 
-const clearInputs = () => {
+function clearInputs() {
   inputFormSettingsBreak.value = ''
   inputFormSettingsStudy.value = ''
 }
 
-const inicialMode = () => {
+function inicialMode() {
   document.getElementById('watch-mode').innerHTML = 'Welcome to the pomodoro timer.'
 }
 
 inicialMode()
 
-const getMyUserFormGithub = () => {
+function getMyUserFormGithub() {
   fetch('https://api.github.com/users/lucasmiller98')
     .then(response => {
       return response.json()
@@ -564,7 +569,7 @@ const getMyUserFormGithub = () => {
   })
 }
 
-const getDataGithub = (data) => {
+function getDataGithub(data) {
   const containerPomodoro = document.getElementById('container-pomodoro')
   
   const span = document.createElement('span')
