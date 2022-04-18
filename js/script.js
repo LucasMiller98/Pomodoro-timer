@@ -13,52 +13,13 @@ let segundsBreak = 0
 let stopedStartWatchStudy = 0
 let stopedStartWatchBreak = 0
 
-const bell = {
-  bell: 'images/bell-notification.svg',
-  song: 'sound/Bell-notification.mp3'
-}
-
-// function permissionValidation() {
-  
-//   if(!('Notification' in window)) {
-//     Toastify({
-//       text: `This browser doesn't suport desktop notifications`,
-//       className: "info-toastfy",
-//       duration: 3000,
-//       position: "center", 
-//       style: {
-//         background: "linear-gradient(to right, #00b09b, #96c93d)",
-//       }
-//     }).showToast();
-//   }
-
-//   if(Notification.permission === 'granted') {
-//     console.log('permitido')
-//     new Notification({ icon: bell.bell })
-//     // return
-//   }
-  
-//   if(Notification.permission !== 'denied' || Notification.permission === 'default') {
-//     console.log('Blocked')
-//     // new Notification({ icon: bell.bell })
-//     new Audio(bell.song).pause()
-//     Notification.requestPermission().then(result => {
-//       if(result === 'granted') {
-//         new Notification({ icon: bell.bell })
-//       }
-//     })
-
-//     // if(permission === "granted") {
-//     //   // console.log(permission === "granted")
-//     //   // console.log(new Notification({ icon: bell.bell }))
-//     //   // return
-//     // }
-//   } 
-// }
-
-// permissionValidation()
-
 function clallNotify() {
+
+  const bell = {
+    bell: 'images/bell-notification.svg',
+    song: 'sound/Bell-notification.mp3'
+  }
+  
   new Notification({ icon: bell.bell })
   new Audio(bell.song).play()
 }
