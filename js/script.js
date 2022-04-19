@@ -428,6 +428,10 @@ function startModal(modalID) {
   const isSaveButton = event.target.id === 'save-button'
   const isInputsEmpties = inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === ''
 
+  if(minutesStudy === -1 && !isSaveButton) {
+    minutesStudy = 1
+  }
+  
   if(!isSaveButton && isOpenModal) {
 
     if(inputFormSettingsStudy.value === '' || inputFormSettingsBreak.value === '') {
